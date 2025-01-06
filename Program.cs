@@ -8,8 +8,8 @@ class Program
     static async Task Main(string[] args)
     {
         // https://envrosym.azurewebsites.net/
-        var client = new HttpClient { BaseAddress = new Uri("https://localhost:7021/") };
-        //var client = new HttpClient { BaseAddress = new Uri("https://envrosym.azurewebsites.net/") };
+       // var client = new HttpClient { BaseAddress = new Uri("https://localhost:7021/") };
+        var client = new HttpClient { BaseAddress = new Uri("https://envrosym.azurewebsites.net/") };
         const string apiKey = "u0000770"; // Replace with your actual API key
 
         // Add the API key to the default request headers
@@ -21,10 +21,9 @@ class Program
             Console.WriteLine("1. Control Fan");
             Console.WriteLine("2. Control Heater");
             Console.WriteLine("3. Read Temperature");
-            Console.WriteLine("4. Exit");
-            Console.WriteLine("5. Display State of All Devices");
-            Console.WriteLine("6. Control Simulation");
-            Console.WriteLine("7. Reset Simulation");
+            Console.WriteLine("4. Display State of All Devices");
+            Console.WriteLine("5. Control Simulation");
+            Console.WriteLine("6. Reset Simulation");
             Console.Write("Select an option: ");
 
             var input = Console.ReadLine();
@@ -40,15 +39,12 @@ class Program
                     await ReadTemperature(client);
                     break;
                 case "4":
-                    await ShutdownSimulation(client);
-                    return;
-                case "5":
                     await DisplayState(client);
                     break;
-                case "6":
+                case "5":
                     await RunTemperatureControlLoop(client);
                     break;
-                case "7":
+                case "6":
                     await Reset(client);
                     break;
                 default:
