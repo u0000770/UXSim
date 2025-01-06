@@ -8,8 +8,8 @@ class Program
     static async Task Main(string[] args)
     {
         // https://envrosym.azurewebsites.net/
-       var client = new HttpClient { BaseAddress = new Uri("https://localhost:7021/") };
-        //var client = new HttpClient { BaseAddress = new Uri("https://envrosym.azurewebsites.net/") };
+       //var client = new HttpClient { BaseAddress = new Uri("https://localhost:7021/") };
+        var client = new HttpClient { BaseAddress = new Uri("https://envrosym.azurewebsites.net/") };
         const string apiKey = "u0000770"; // Replace with your actual API key
 
         // Add the API key to the default request headers
@@ -87,6 +87,14 @@ class Program
 
         double currentTemperature = await GetAverageTemperature(client);
 
+        // Prompt user for the final target temperature in Phase 4
+        Console.Write("Enter the final target temperature for Phase 4: ");
+        if (!double.TryParse(Console.ReadLine(), out double finalTargetTemperature))
+        {
+            Console.WriteLine("Invalid input. Please enter a valid numeric temperature.");
+            return;
+        }
+
         while (true)
         {
             // Phase 1: Gradually increase to 20°C over 30 seconds
@@ -98,12 +106,11 @@ class Program
             // Phase 3: Hold at 16°C for 10 seconds
             currentTemperature = await HoldTemperature(client, currentTemperature, 16.0, 10);
 
-            // Phase 4: Gradually return to 18°C and maintain
-            currentTemperature = await AdjustTemperature(client, currentTemperature, 18.0, 20);
-            currentTemperature = await HoldTemperature(client, currentTemperature, 18.0, int.MaxValue); // Maintain until exit
+            // Phase 4: Gradually adjust to the user-defined target temperature and maintain
+            currentTemperature = await AdjustTemperature(client, currentTemperature, finalTargetTemperature, 20);
+            currentTemperature = await HoldTemperature(client, currentTemperature, finalTargetTemperature, int.MaxValue); // Maintain until exit
         }
     }
-
     static async Task<double> AdjustTemperature(HttpClient client, double currentTemperature, double targetTemperature, int durationSeconds)
     {
         Console.WriteLine($"Adjusting temperature to {targetTemperature}°C over {durationSeconds} seconds...");
