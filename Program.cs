@@ -8,8 +8,8 @@ class Program
     static async Task Main(string[] args)
     {
         // https://envrosym.azurewebsites.net/
-       // var client = new HttpClient { BaseAddress = new Uri("https://localhost:7021/") };
-        var client = new HttpClient { BaseAddress = new Uri("https://envrosym.azurewebsites.net/") };
+       var client = new HttpClient { BaseAddress = new Uri("https://localhost:7021/") };
+        //var client = new HttpClient { BaseAddress = new Uri("https://envrosym.azurewebsites.net/") };
         const string apiKey = "u0000770"; // Replace with your actual API key
 
         // Add the API key to the default request headers
@@ -131,6 +131,7 @@ class Program
             await Task.Delay(intervalMs);
             currentTemperature = await GetAverageTemperature(client);
             Console.WriteLine($"Current Temperature: {currentTemperature:F1}°C");
+            await DisplayState(client);
         }
 
         return currentTemperature;
@@ -160,6 +161,7 @@ class Program
             await Task.Delay(intervalMs);
             currentTemperature = await GetAverageTemperature(client);
             Console.WriteLine($"Current Temperature: {currentTemperature:F1}°C");
+            await DisplayState(client);
         }
 
         return currentTemperature;
