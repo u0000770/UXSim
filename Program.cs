@@ -8,8 +8,8 @@ class Program
     static async Task Main(string[] args)
     {
         // https://envrosym.azurewebsites.net/
-        //var client = new HttpClient { BaseAddress = new Uri("https://localhost:7021/") };
-        var client = new HttpClient { BaseAddress = new Uri("https://envrosym.azurewebsites.net/") };
+        var client = new HttpClient { BaseAddress = new Uri("https://localhost:7021/") };
+        //var client = new HttpClient { BaseAddress = new Uri("https://envrosym.azurewebsites.net/") };
         const string apiKey = "u0000770"; // Replace with your actual API key
 
         // Add the API key to the default request headers
@@ -24,6 +24,7 @@ class Program
             Console.WriteLine("4. Exit");
             Console.WriteLine("5. Display State of All Devices");
             Console.WriteLine("6. Control Simulation");
+            Console.WriteLine("7. Reset Simulation");
             Console.Write("Select an option: ");
 
             var input = Console.ReadLine();
@@ -47,6 +48,9 @@ class Program
                 case "6":
                     await RunTemperatureControlLoop(client);
                     break;
+                case "7":
+                    await Reset(client);
+                    break;
                 default:
                     Console.WriteLine("Invalid option. Please try again.");
                     break;
@@ -55,6 +59,32 @@ class Program
             Console.WriteLine(); // Add a blank line for better readability
         }
     }
+
+    private static async Task Reset(HttpClient client)
+    {
+        Console.WriteLine("Resetting client state...");
+
+        try
+        {
+            // Send a POST request to the reset endpoint
+            var response = await client.PostAsync("api/Envo/reset", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Client state has been successfully reset.");
+                await DisplayState(client);
+            }
+            else
+            {
+                Console.WriteLine($"Failed to reset client state: {response.ReasonPhrase}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error while resetting client state: {ex.Message}");
+        }
+    }
+
     static async Task RunTemperatureControlLoop(HttpClient client)
     {
         Console.WriteLine("Starting temperature control algorithm...");
